@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    
     <meta name="description" content="Vali is a responsive and free admin theme built with Bootstrap 4, SASS and PUG.js. It's fully customizable and modular.">
     <!-- Twitter meta-->
     <meta property="twitter:card" content="summary_large_image">
@@ -13,6 +14,9 @@
     <meta property="og:url" content="http://pratikborsadiya.in/blog/vali-admin">
     <meta property="og:image" content="http://pratikborsadiya.in/blog/vali-admin/hero-social.png">
     <meta property="og:description" content="Vali is a responsive and free admin theme built with Bootstrap 4, SASS and PUG.js. It's fully customizable and modular.">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     <title> @yield('title') </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,6 +25,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('assets/css/main.css')}}">
     <!-- Font-icon css-->
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
   </head>
   <body class="app sidebar-mini">
     <!-- Navbar-->
@@ -168,6 +173,8 @@
     <script src="{{asset('assets/js/plugins/pace.min.js')}}"></script>
     <!-- Page specific javascripts-->
     <script type="text/javascript" src="{{asset('assets/js/plugins/chart.js')}}"></script>
+    {{-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.11.0/dist/sweetalert2.all.min.js"></script>
     <script type="text/javascript">
       var data = {
       	labels: ["January", "February", "March", "April", "May"],
@@ -226,5 +233,7 @@
       	ga('send', 'pageview');
       }
     </script>
+    @include('sweetalert::alert')
+    @yield('script')
   </body>
 </html>

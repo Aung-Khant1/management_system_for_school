@@ -33,10 +33,12 @@
 		    		<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
 		    		<div>
 		    			<a href="" class="btn btn-primary">View</a>
-		    			<a href="" class="btn btn-success ml-3">Invite</a>
+		    			{{-- <a href="{{route('searchMember', $row->id)}}" class="btn btn-success ml-3">Invite</a> --}}
+		    			<button class="btn btn-primary invite_btn" data-rid={{$row->id}}>Invite</button>
 		    		</div>
 		  		</div>
 		  		<img src="{{$row->photo}}" class="card-img-bottom" alt="...">
+
 			</div>
 		</div>
 		@endforeach
@@ -45,5 +47,165 @@
 	<div>
 		<a href="{{route('Host.create')}}" class="btn btn-primary">Create Room</a>
 	</div>
+
+@endsection
+
+@section('script')
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.9/sweetalert2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.9/sweetalert2.min.js"></script> --}}
+
+
+
+<script type="text/javascript">
+	$.ajaxSetup({
+    	headers: {
+        	'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+   		}
+	});
+
+
+	$(document).ready(function() {
+		$('.invite_btn').click(function() {
+			var rrid = $(this).data("rid");
+			// var search = prompt("User Id");
+			// $.post("{{route('search')}}", {search: search}, function(response) {
+			// 	console.log(response);
+			// });
+			Swal.fire({
+				title: 'User ID',
+				input: 'text',
+				inputAttributes: {
+					autocapitalize: 'off'
+				},
+				showCancelButton: true,
+				confirmButtonText: 'Search',
+				showLoaderOnConfirm: true,
+				inputValidator: (value) => {
+				    if (!value) {
+				      return 'You need to type user id!'
+				    }
+				  },
+				allowOutsideClick: () => !Swal.isLoading()
+				}).then((value) => {
+					if (value.isConfirmed) {
+					var search = value.value;
+					// console.log(search.value)
+					$.post("{{route('search')}}", {search: search}, function(response) {
+						// console.log(response)
+						
+						if (response.length > 0 && response.length < 2) {
+							var uuid = response[0].id;
+							Swal.fire({
+								html: "<div class='container-fluid' px-n2 mx-n2><div style='background-color: #eee; line-height: 5rem;'><div class='row'><div class='col-md-4'><img src='"+response[0].photo+"' width='50' height='50'></div><div class='col-md-6'><b>"+response[0].name+"</b></div></div></div></div>",
+								confirmButtonText: 'Invite',
+								showCancelButton: true,
+								showLoaderOnConfirm: true,
+							}).then((result)=>{
+								// console.log(result)
+								if (result.isConfirmed) {
+									var rid = rrid;
+									var uid = uuid;
+									console.log(uid);
+									$.post("{{route('adduser')}}", {
+							    		uid: uid,
+							    		rid: rid,
+							    	}, function(response) {
+										Swal.fire({
+											icon: 'success',
+											title: 'Request Successful',
+											
+										})
+									});
+								}
+							})
+						}else {
+							Swal.fire({
+					    
+					    		text: "There is no user that you are looking for.",
+					    
+					 		});
+						}
+					});
+				}
+
+
+
+					// if (result.isConfirmed) {
+					// 	Swal.fire({
+					// 		title: `${result.value.login}'s avatar`,
+					// 		imageUrl: result.value.avatar_url
+					// 	})
+					// }
+				})
+
+
+
+
+
+
+			// .then((value) => {
+			// 	var search = value;
+  	// 			$.post("{{route('search')}}", {search: search}, function(response) {
+
+  	// 				if (response.length > 0 && response.length < 2) {
+  	// 					var uid = response[0].id; 
+  	// 					Swal.fire({
+			// 		    text: 'Name : ' + response[0].name,
+			// 		    icon: response[0].photo,
+			// 		    buttons:{
+			// 		    	cancel: {
+			// 				    text: "Cancel",
+			// 				    value: null,
+			// 				    visible: true,
+			// 				    className: "",
+			// 				    closeModal: true,
+			// 				  },
+			// 				  confirm: {
+			// 				    text: "OK",
+			// 				    value: true,
+			// 				    visible: true,
+			// 				    className: "",
+			// 				    closeModal: true
+			// 				  }
+			// 		    },
+			// 		  }).then((ok) => {
+			// 				if (ok) {
+			// 				    Swal.fire("Request successful!").then((ok)=>{
+			// 				    	var uid = uid;
+			// 				    	$.post("{{route('adduser')}}", {
+			// 				    		uid: uid,
+			// 				    		rid: rid,
+			// 				    	}, function(response) {
+			// 				    		console.log(response);
+			// 				    	});
+			// 				    });
+			// 				  } 
+			// 				});
+  	// 				}else{
+  	// 					Swal.fire({
+					    
+			// 		    text: "There is no user that you are looking for.",
+					    
+			// 		  });
+  	// 				}
+  					// swal({
+					  //   title: response,
+					  //   // text: response.Joe,
+					  //   // icon: imageURL,
+					  // });
+  					
+					// console.log(response);
+				// });
+			
+		});
+
+
+
+	});
+
+	
+
+
+</script>
 
 @endsection

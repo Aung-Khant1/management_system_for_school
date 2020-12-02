@@ -7,6 +7,7 @@ use App\User;
 use App\Room;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
+use RealRashid\SweetAlert\Facades\Alert;
 
 
 class HostController extends Controller
@@ -115,4 +116,31 @@ class HostController extends Controller
     {
         //
     }
+
+    
+
+    public function search(Request $request)
+    {
+        
+        // $return = array("Peter"=>"35", "Ben"=>"37", "Joe"=>"43");
+        $search = $request->search;
+        $result = User::where('userno', 'like', '%' . $search . '%')->get();
+        // if ($result == []) {
+        //     $text = "There is no user that you are looling for.";
+        //     return $text;
+            
+        // }else{
+            return $result;
+        // }
+    }
+
+    public function adduser(Request $request)
+    {
+        $user_id = $request->uid;
+        $room = Room::find($request->rid);
+        // $room->users()->sync([$request->rid,$request->uid]);
+        $room->users()->attach($user_id);
+        return $room;
+    }
+
 }

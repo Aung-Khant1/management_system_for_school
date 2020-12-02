@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
+
 use App\Room;
+
 
 class GeneralController extends Controller
 {
@@ -28,4 +30,6 @@ class GeneralController extends Controller
 
     	return view('host.rooms', compact('user', 'role', 'rooms'));
     }
+
+    
 }

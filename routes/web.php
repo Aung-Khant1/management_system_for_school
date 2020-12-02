@@ -30,6 +30,10 @@ Route::get('Register', 'GeneralController@singup')->name('register');
 Route::resource('Host', 'HostController');
 Route::get('Hroom', 'GeneralController@rooms')->name('hrooms');
 Route::resource('usrsinroom', 'UserInRoomController');
+// Route::get('searchMember/{id}', 'HostController@searchMember')->name('searchMember');
+Route::post('search', 'HostController@search')->name('search');
+Route::post('adduser', 'HostController@adduser')->name('adduser');
+
 
 
 // Teacher Controller

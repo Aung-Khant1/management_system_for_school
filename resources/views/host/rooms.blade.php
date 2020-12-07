@@ -5,7 +5,7 @@
 @section('navs')
 
 	<li class="breadcrumb-item"><a href="{{route('Host.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
-	<li class="breadcrumb-item"><a href="{{route('hrooms')}}">Rooms</a></li>
+	<li class="breadcrumb-item"><a href="{{route('hrooms.index')}}">Rooms</a></li>
 
 @endsection
 
@@ -25,16 +25,16 @@
 
 	<div class="row">
 		@foreach($rooms as $row)
-		<div class="mb-4 col-md-3" style="height: 487px;">
+		<div class="mb-4 col-md-6 col-lg-3 col-sm-6" style="height: 487px;">
 			<div class="card">
 		  		<div class="card-body">
 		   			<h5 class="card-title"> {{$row->name}} </h5>
 		    		<p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
 		    		<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
 		    		<div>
-		    			<a href="" class="btn btn-primary">View</a>
+		    			<a href="{{route('hrooms.show', $row->id)}}" class="btn btn-primary">View</a>
 		    			{{-- <a href="{{route('searchMember', $row->id)}}" class="btn btn-success ml-3">Invite</a> --}}
-		    			<button class="btn btn-primary invite_btn" data-rid={{$row->id}}>Invite</button>
+		    			<button class="btn btn-primary invite_btn ml-2" data-rid={{$row->id}}>Invite</button>
 		    		</div>
 		  		</div>
 		  		<img src="{{$row->photo}}" class="card-img-bottom" alt="...">
@@ -79,7 +79,6 @@
 				},
 				showCancelButton: true,
 				confirmButtonText: 'Search',
-				showLoaderOnConfirm: true,
 				inputValidator: (value) => {
 				    if (!value) {
 				      return 'You need to type user id!'
@@ -89,7 +88,7 @@
 				}).then((value) => {
 					if (value.isConfirmed) {
 					var search = value.value;
-					// console.log(search.value)
+					// console.log(search)
 					$.post("{{route('search')}}", {search: search}, function(response) {
 						// console.log(response)
 						
@@ -99,22 +98,32 @@
 								html: "<div class='container-fluid' px-n2 mx-n2><div style='background-color: #eee; line-height: 5rem;'><div class='row'><div class='col-md-4'><img src='"+response[0].photo+"' width='50' height='50'></div><div class='col-md-6'><b>"+response[0].name+"</b></div></div></div></div>",
 								confirmButtonText: 'Invite',
 								showCancelButton: true,
-								showLoaderOnConfirm: true,
+								// showLoaderOnConfirm: true,
 							}).then((result)=>{
 								// console.log(result)
 								if (result.isConfirmed) {
 									var rid = rrid;
 									var uid = uuid;
-									console.log(uid);
+									// console.log(uid);
 									$.post("{{route('adduser')}}", {
 							    		uid: uid,
 							    		rid: rid,
 							    	}, function(response) {
-										Swal.fire({
-											icon: 'success',
-											title: 'Request Successful',
-											
-										})
+							    		// console.log(response)
+							    		if (response.length > 0) {
+							    			Swal.fire({
+												icon: 'error',
+												title: response,
+												
+											})
+							    		}else{
+							    			Swal.fire({
+												icon: 'success',
+												title: 'Request Successful',
+												
+											})
+							    		}
+										
 									});
 								}
 							})
@@ -128,75 +137,8 @@
 					});
 				}
 
-
-
-					// if (result.isConfirmed) {
-					// 	Swal.fire({
-					// 		title: `${result.value.login}'s avatar`,
-					// 		imageUrl: result.value.avatar_url
-					// 	})
-					// }
 				})
 
-
-
-
-
-
-			// .then((value) => {
-			// 	var search = value;
-  	// 			$.post("{{route('search')}}", {search: search}, function(response) {
-
-  	// 				if (response.length > 0 && response.length < 2) {
-  	// 					var uid = response[0].id; 
-  	// 					Swal.fire({
-			// 		    text: 'Name : ' + response[0].name,
-			// 		    icon: response[0].photo,
-			// 		    buttons:{
-			// 		    	cancel: {
-			// 				    text: "Cancel",
-			// 				    value: null,
-			// 				    visible: true,
-			// 				    className: "",
-			// 				    closeModal: true,
-			// 				  },
-			// 				  confirm: {
-			// 				    text: "OK",
-			// 				    value: true,
-			// 				    visible: true,
-			// 				    className: "",
-			// 				    closeModal: true
-			// 				  }
-			// 		    },
-			// 		  }).then((ok) => {
-			// 				if (ok) {
-			// 				    Swal.fire("Request successful!").then((ok)=>{
-			// 				    	var uid = uid;
-			// 				    	$.post("{{route('adduser')}}", {
-			// 				    		uid: uid,
-			// 				    		rid: rid,
-			// 				    	}, function(response) {
-			// 				    		console.log(response);
-			// 				    	});
-			// 				    });
-			// 				  } 
-			// 				});
-  	// 				}else{
-  	// 					Swal.fire({
-					    
-			// 		    text: "There is no user that you are looking for.",
-					    
-			// 		  });
-  	// 				}
-  					// swal({
-					  //   title: response,
-					  //   // text: response.Joe,
-					  //   // icon: imageURL,
-					  // });
-  					
-					// console.log(response);
-				// });
-			
 		});
 
 

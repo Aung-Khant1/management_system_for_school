@@ -110,7 +110,7 @@
       <ul class="app-menu">
         <li><a class="app-menu__item {{Request::is('Host*') ? 'active' : ''}}" href="{{route('Host.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
 
-        <li><a class="app-menu__item {{Request::is('Hroom*') ? 'active' : ''}}" href="{{route('hrooms')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms</span></a></li>
+        <li><a class="app-menu__item {{Request::is('hrooms*') ? 'active' : ''}}" href="{{route('hrooms.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms</span></a></li>
 
         <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-laptop"></i><span class="app-menu__label">UI Elements</span><i class="treeview-indicator fa fa-angle-right"></i></a>
           <ul class="treeview-menu">
@@ -171,6 +171,10 @@
     <script src="{{asset('assets/js/main.js')}}"></script>
     <!-- The javascript plugin to display page loading on top-->
     <script src="{{asset('assets/js/plugins/pace.min.js')}}"></script>
+    <!-- Data table plugin-->
+    <script type="text/javascript" src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/js/plugins/dataTables.bootstrap.min.js')}}"></script>
+    <script type="text/javascript">$('#sampleTable').DataTable();</script>
     <!-- Page specific javascripts-->
     <script type="text/javascript" src="{{asset('assets/js/plugins/chart.js')}}"></script>
     {{-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> --}}

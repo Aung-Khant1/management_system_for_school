@@ -28,7 +28,9 @@ Route::get('Register', 'GeneralController@singup')->name('register');
 // Host Controller
 
 Route::resource('Host', 'HostController');
-Route::get('Hroom', 'GeneralController@rooms')->name('hrooms');
+Route::resource('hrooms', 'RoomController');
+Route::get('hrooms/teachers/{id}', 'RoomController@teachersview')->name('teachersview');
+Route::get('hrooms/students/{id}', 'RoomController@studentsview')->name('studentsview');
 Route::resource('usrsinroom', 'UserInRoomController');
 // Route::get('searchMember/{id}', 'HostController@searchMember')->name('searchMember');
 Route::post('search', 'HostController@search')->name('search');

@@ -6,7 +6,7 @@
 
 	<li class="breadcrumb-item"><a href="{{route('Host.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
 
-	<li class="breadcrumb-item"><a href="{{route('hrooms')}}">Rooms</a></li>
+	<li class="breadcrumb-item"><a href="{{route('hrooms.index')}}">Rooms</a></li>
 	<li class="breadcrumb-item">Create Room</li>
 
 @endsection

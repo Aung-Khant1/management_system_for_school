@@ -17,19 +17,7 @@ class GeneralController extends Controller
     	return view('register');
     }
 
-    public function rooms($value='')
-    {
-    	$user = Auth::user();
-        $role = auth()->user()->getRoleNames();
-
-        $id = Auth::id();
-        
-        $rooms = Room::where('user_id', $id)->get();
-        
-        // dd($rooms);
-
-    	return view('host.rooms', compact('user', 'role', 'rooms'));
-    }
+    
 
     
 }

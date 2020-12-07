@@ -8,6 +8,8 @@ use App\Room;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 
 class HostController extends Controller
@@ -60,14 +62,14 @@ class HostController extends Controller
         $room->name = $request->name;
         $room->photo = $room_photo;
         $room->roomno = uniqid();
-        $room->password = $request->password;
+        $room->password = Hash::make($request->password);
         $room->user_id = $user_id;
         $room->save();
 
         // dd($room);
         $room->users()->attach($user_id);
 
-        return redirect()->route('hrooms');
+        return redirect()->route('hrooms.index');
 
 
     }
@@ -80,7 +82,7 @@ class HostController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -103,7 +105,7 @@ class HostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
     }
 
     /**
@@ -122,25 +124,35 @@ class HostController extends Controller
     public function search(Request $request)
     {
         
-        // $return = array("Peter"=>"35", "Ben"=>"37", "Joe"=>"43");
+        
         $search = $request->search;
         $result = User::where('userno', 'like', '%' . $search . '%')->get();
-        // if ($result == []) {
-        //     $text = "There is no user that you are looling for.";
-        //     return $text;
-            
-        // }else{
-            return $result;
-        // }
+        
+        return $result;
+        
     }
 
     public function adduser(Request $request)
     {
         $user_id = $request->uid;
-        $room = Room::find($request->rid);
-        // $room->users()->sync([$request->rid,$request->uid]);
-        $room->users()->attach($user_id);
-        return $room;
+        $room_id = $request->rid;
+        $userhas = DB::table('user_in__rooms')
+                ->where([['room_id','=',$room_id],['user_id','=',$user_id]])
+                ->get();
+        $count = count($userhas);
+        $reply = ['User already exit!'];
+
+        if ($count < 1) {
+            $room = Room::find($room_id);
+            // $room->users()->sync([$request->rid,$request->uid]);
+            $room->users()->attach($user_id);
+            return $room;
+        }else{
+            return $reply;
+        }
+
+
+        
     }
 
 }

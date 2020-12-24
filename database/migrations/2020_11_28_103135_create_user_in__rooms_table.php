@@ -25,6 +25,8 @@ class CreateUserInRoomsTable extends Migration
                     ->references('id')
                     ->on('users')
                     ->onDelete('cascade');
+            $table->integer('role_id');
+            $table->integer('status')->default(0);
 
             $table->timestamps();
         });

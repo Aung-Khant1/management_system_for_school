@@ -139,13 +139,18 @@ class HostController extends Controller
         $userhas = DB::table('user_in__rooms')
                 ->where([['room_id','=',$room_id],['user_id','=',$user_id]])
                 ->get();
+
+
         $count = count($userhas);
         $reply = ['User already exit!'];
+        
+        $userRole = DB::table('model_has_roles')
+                    ->where('model_id','=',$user_id)
+                    ->get();
 
         if ($count < 1) {
             $room = Room::find($room_id);
-            // $room->users()->sync([$request->rid,$request->uid]);
-            $room->users()->attach($user_id);
+            $room->users()->attach($user_id,['role_id'=>$userRole[0]->role_id]);
             return $room;
         }else{
             return $reply;

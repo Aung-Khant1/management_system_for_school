@@ -1,11 +1,11 @@
 @extends('template')
 
-@section('sub_title', 'Dashboard')
+@section('sub_title', 'Rooms')
 
 @section('navs')
 
-	<li class="breadcrumb-item"><a href="{{route('Host.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
-	<li class="breadcrumb-item"><a href="{{route('Host.index')}}">Dashboard</a></li>
+	<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
+	<li class="breadcrumb-item"><a href="{{route('trooms.index')}}">Rooms</a></li>
 
 @endsection
 
@@ -22,9 +22,13 @@
 @endsection
 
 @section('sidemenu')
-<li><a class="app-menu__item {{Request::is('Host*') ? 'active' : ''}}" href="{{route('Host.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
+<li><a class="app-menu__item {{Request::is('Teacher*') ? 'active' : ''}}" href="{{route('Teacher.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
 
-<li><a class="app-menu__item {{Request::is('hrooms*') ? 'active' : ''}}" href="{{route('hrooms.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms</span></a></li>
+<li><a class="app-menu__item {{Request::is('trooms*') ? 'active' : ''}}" href="{{route('trooms.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms</span></a></li>
+
+<li><a class="app-menu__item {{Request::is('roomreq*') ? 'active' : ''}}" href="{{route('roomreq')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Requested Rooms</span></a></li>
+
+<li><a class="app-menu__item {{Request::is('reqrooms*') ? 'active' : ''}}" href="{{route('reqrooms')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms Invitations</span></a></li>
 
 <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-laptop"></i><span class="app-menu__label">UI Elements</span><i class="treeview-indicator fa fa-angle-right"></i></a>
   <ul class="treeview-menu">
@@ -66,6 +70,31 @@
 
 @section('content')
 
-	Host
+	<div class="row">
+        @foreach ($rooms as $row)
+        @foreach($row as $room)
+		<div class="mb-4 col-md-6 col-lg-3 col-sm-6" style="height: 487px;">
+			<div class="card">
+		  		<div class="card-body">
+		   			<h5 class="card-title"> {{$room->name}} </h5>
+		    		<p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+		    		<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+		    		<div>
+		    			<a href="{{route('hrooms.show', $room->id)}}" class="btn btn-primary">View</a>
+		    			{{-- <a href="{{route('searchMember', $room->id)}}" class="btn btn-success ml-3">Invite</a> --}}
+		    			<button class="btn btn-primary invite_btn ml-2" data-rid={{$room->id}}>Invite</button>
+		    		</div>
+		  		</div>
+		  		<img src="{{$room->photo}}" class="card-img-bottom" alt="...">
+
+			</div>
+		</div>
+		@endforeach
+        @endforeach		
+	</div>
+
+	<div>
+		<a href="{{route('trooms.create')}}" class="btn btn-primary">Join Room</a>
+	</div>
 
 @endsection

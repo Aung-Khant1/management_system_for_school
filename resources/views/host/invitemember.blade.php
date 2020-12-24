@@ -1,14 +1,14 @@
 @extends('template')
+@section('sub_title', "Invite Member")
 
-@section('sub_title')
-	{{$room->name}}'s Dashboard
-@endsection
 @section('navs')
 
 	<li class="breadcrumb-item"><a href="{{route('Host.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
 	<li class="breadcrumb-item"><a href="{{route('Host.index')}}">Dashboard</a></li>
 	<li class="breadcrumb-item"><a href="{{route('hrooms.index')}}">Rooms</a></li>
 	<li class="breadcrumb-item"><a href="{{route('hrooms.show',$room->id)}}"> {{$room->name}}'s Dashboard </a></li>
+	<li class="breadcrumb-item"><a href="{{url()->current()}}"> Invite </a></li>
+
 
 @endsection
 
@@ -21,7 +21,7 @@
 @endsection
 
 @section('role')
-	{{$role[0]}}
+	<span style="text-transform: uppercase;"> {{$role[0]}} </span>
 @endsection
 
 @section('sidemenu')
@@ -68,122 +68,136 @@
 @endsection
 
 @section('content')
-
-	<div class="row">
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('teachersview', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4>Teachers</h4>
-						<p style="color: red;"><b> {{$tcount}} </b></p>
-					</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="tile-body">
+				<div class="table-responsive">
+					<table class="table table-hover" id="sampleTable">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Name</th>
+								<th>Role</th>
+								<th>Action</th>
+								{{-- <th>Office</th>
+								<th>Age</th>
+								<th>Start date</th>
+								<th>Salary</th> --}}
+							</tr>
+						</thead>
+						<tbody>
+							@php
+								$i = 1;
+							@endphp
+							@foreach ($members as $key => $member)
+							
+								<tr>
+									<td> {{$i}} </td>
+									<td> {{$member->name}} </td>
+									<td style="text-transform: uppercase;"> {{$member->roles[0]->name}} </td>
+									<td>
+										@if (in_array($member->id,$already))
+											<button class="btn"> Added </button>
+										@elseif (in_array($member->id, $invitedpending))
+											<div class="cancel">
+												<button class="btn"> Invited </button>
+											</div>
+										@elseif (in_array($member->id, $requestpending))
+											<div class="cancel">
+												<button class="btn"> Requesting </button>
+											</div>
+										@else
+											<div class="added">
+												<button class="btn btn-primary add" data-uid={{$member->id}} > Add </button>
+											</div>
+										@endif
+										
+									</td>
+									
+								</tr>
+							@php
+								$i++;
+							@endphp
+							
+							@endforeach
+							
+						</tbody>
+					</table>
 				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('studentsview', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4>Students</h4>
-						<p style="color: red;"><b> {{$scount}} </b></p>
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small info coloured-icon"><i class="icon fa fa-thumbs-o-up fa-3x"></i>
-					<div class="info">
-						<h4>Attendances</h4>
-						{{-- <p style="color: red;"><b>25</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small danger coloured-icon"><i class="icon fa fa-star fa-3x"></i>
-					<div class="info">
-						<h4>exam results</h4>
-						{{-- <p style="color: red;"><b>500</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-files-o fa-3x"></i>
-					<div class="info">
-						<h4>Daily Lessons</h4>
-						{{-- <p style="color: red;"><b>10</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-files-o fa-3x"></i>
-					<div class="info">
-						<h4>Assignments</h4>
-						{{-- <p style="color: red;"><b>10</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-files-o fa-3x"></i>
-					<div class="info">
-						<h4>old questions</h4>
-						{{-- <p style="color: red;"><b>500</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-question fa-3x"></i>
-					<div class="info">
-						<h4>quizzes</h4>
-						{{-- <p style="color: red;"><b>500</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('invitemember', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4> Invite Member </h4>
-						<p style="color: red;"><b>  </b></p>
-					</div>
-				</div>
-			</a>
-		</div>
-
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('memberrequest', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4> Members Request </h4>
-						<p style="color: red;"><b> {{$rcount}} </b></p>
-					</div>
-				</div>
-			</a>
-		</div>
-
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('invitedmember', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4> Invited Members </h4>
-						<p style="color: red;"><b> {{$icount}} </b></p>
-					</div>
-				</div>
-			</a>
+			</div>
 		</div>
 	</div>
+</div>
+@endsection
 
+
+@section('script')
+		<script>
+			$.ajaxSetup({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				}
+			});
+
+			$(document).ready(function () {
+				$('.add').click(function () { 
+					// alert('ok');
+					var thisbtn = $(this);
+					var uid = $(this).data('uid');
+					var rid = {{$room->id}};
+					
+					// alert(uid);
+					$.post("{{route('inviteuser')}}", {
+						uid: uid,
+						rid: rid
+					},function (response) {
+						// console.log(response);
+						if (response.length > 0) {
+							const Toast = Swal.mixin({
+							toast: true,
+							position: 'top-end',
+							showConfirmButton: false,
+							timer: 3000,
+							timerProgressBar: false,
+							didOpen: (toast) => {
+								toast.addEventListener('mouseenter', Swal.stopTimer)
+								toast.addEventListener('mouseleave', Swal.resumeTimer)
+							}
+						})
+
+						Toast.fire({
+							icon: 'error',
+							title: 'User Already Exit Or Something went Wrong!'
+						})
+						}else{
+							var html = `<button class="btn"> Invited </button>`;
+							$(thisbtn).replaceWith(html);
+							const Toast = Swal.mixin({
+							toast: true,
+							position: 'top-end',
+							showConfirmButton: false,
+							timer: 3000,
+							timerProgressBar: false,
+							didOpen: (toast) => {
+								toast.addEventListener('mouseenter', Swal.stopTimer)
+								toast.addEventListener('mouseleave', Swal.resumeTimer)
+							}
+						})
+
+						Toast.fire({
+							icon: 'success',
+							title: 'Request Successful!'
+						})
+						
+						}
+						
+						},
+					);
+					
+				});
+			});
+
+
+		</script>
 @endsection

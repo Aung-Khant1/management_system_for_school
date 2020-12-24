@@ -3,6 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
+use App\Room;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
@@ -13,7 +20,11 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        return view('teacher.index');
+        $user = Auth::user();
+        $role = auth()->user()->getRoleNames();
+        // dd($role);
+        
+        return view('teacher.index', compact('user', 'role'));
     }
 
     /**

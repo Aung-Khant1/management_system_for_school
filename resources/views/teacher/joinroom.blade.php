@@ -1,11 +1,13 @@
 @extends('template')
 
-@section('sub_title', 'Dashboard')
+@section('sub_title', 'Join Room')
 
 @section('navs')
 
 	<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
-	<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{route('Teacher.index')}}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{route('trooms.index')}}">Rooms</a></li>
+	<li class="breadcrumb-item"><a href="{{url()->current()}}"> Join </a></li>
 
 @endsection
 
@@ -26,7 +28,7 @@
 
 <li><a class="app-menu__item {{Request::is('trooms*') ? 'active' : ''}}" href="{{route('trooms.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms</span></a></li>
 
-<li><a class="app-menu__item {{Request::is('roomreq*') ? 'active' : ''}}" href="{{route('roomreq')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Requested Rooms</span></a></li>
+<li><a class="app-menu__item {{Request::is('roomreq*') ? 'active' : ''}}" href="{{route('roomreq')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms Requested</span></a></li>
 
 <li><a class="app-menu__item {{Request::is('reqrooms*') ? 'active' : ''}}" href="{{route('reqrooms')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms Invitations</span></a></li>
 
@@ -70,6 +72,130 @@
 
 @section('content')
 
-	Teacher
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="tile-body">
+				<div class="table-responsive">
+					<table class="table table-hover" id="sampleTable">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Name</th>
+								<th>Action</th>
+								{{-- <th>Office</th>
+								<th>Age</th>
+								<th>Start date</th>
+								<th>Salary</th> --}}
+							</tr>
+						</thead>
+						<tbody>
+							@php
+								$i = 1;
+							@endphp
+							@foreach ($rooms as $key => $room)
+							
+								<tr>
+									<td> {{$i}} </td>
+									<td> {{$room->name}} </td>
+									<td>
+										@if (in_array($room->id,$already))
+											<button class="btn"> Joined </button>
+										@elseif (in_array($room->id, $joinpending))
+											<div class="cancel">
+												<button class="btn"> Requested </button>
+											</div>
+											@elseif (in_array($room->id, $invitedpending))
+											<div class="cancel">
+												<button class="btn"> Inviting </button>
+											</div>
+										@else
+											<div class="added">
+												<button class="btn btn-primary join" data-rid={{$room->id}} > Join </button>
+											</div>
+										@endif
+										
+									</td>
+									
+								</tr>
+							@php
+								$i++;
+							@endphp
+							
+							@endforeach
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
+@endsection
+
+@section('script')
+<script>
+    $.ajaxSetup({
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		}
+    });
+    
+    $(document).ready(function () {
+        $('.join').click(function () { 
+            // alert('ok');
+			var thisbtn = $(this);
+            var rid = $(this).data('rid');
+            // alert(rid);
+            $.post("{{route('joinroom')}}", {
+                rid: rid
+            },
+                function (response) {
+                    console.log(response);
+					if (response.length > 0) {
+						const Toast = Swal.mixin({
+							toast: true,
+							position: 'top-end',
+							showConfirmButton: false,
+							timer: 5000,
+							timerProgressBar: false,
+							didOpen: (toast) => {
+								toast.addEventListener('mouseenter', Swal.stopTimer)
+								toast.addEventListener('mouseleave', Swal.resumeTimer)
+							}
+						})
+
+						Toast.fire({
+							icon: 'error',
+							title: 'User Already Exit Or Something went Wrong!'
+						})
+					}else{
+						var html = `<button class="btn"> Requested </button>`;
+							$(thisbtn).replaceWith(html);
+							const Toast = Swal.mixin({
+							toast: true,
+							position: 'top-end',
+							showConfirmButton: false,
+							timer: 5000,
+							timerProgressBar: false,
+							didOpen: (toast) => {
+								toast.addEventListener('mouseenter', Swal.stopTimer)
+								toast.addEventListener('mouseleave', Swal.resumeTimer)
+							}
+						})
+
+						Toast.fire({
+							icon: 'success',
+							title: 'Request Successful!'
+						})
+					}
+                },
+                
+            );
+
+            
+        });
+    });
+</script>
 @endsection

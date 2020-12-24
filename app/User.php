@@ -39,10 +39,12 @@ class User extends Authenticatable
     ];
 
 
-    // public function rooms()
-    // {
-    //     return $this->belongsToMany('App\Room','user_in__rooms')
-    //                 ->withTimestamps();
-    // }
+    public function rooms()
+    {
+        return $this->belongsToMany('App\Room','user_in__rooms')
+                    ->withPivot('status')
+                    ->withPivot('role_id')
+                    ->withTimestamps();
+    }
     
 }

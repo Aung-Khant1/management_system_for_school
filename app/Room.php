@@ -13,6 +13,8 @@ class Room extends Model
     public function users()
     {
         return $this->belongsToMany('App\User','user_in__rooms')
+        			->withPivot('status')
+                    ->withPivot('role_id')
                     ->withTimestamps();
     }
 

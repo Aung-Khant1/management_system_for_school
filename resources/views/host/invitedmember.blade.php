@@ -1,7 +1,7 @@
 @extends('template')
 
 @section('sub_title')
-	{{$room->name}}'s Dashboard
+	Invited Member
 @endsection
 @section('navs')
 
@@ -9,6 +9,7 @@
 	<li class="breadcrumb-item"><a href="{{route('Host.index')}}">Dashboard</a></li>
 	<li class="breadcrumb-item"><a href="{{route('hrooms.index')}}">Rooms</a></li>
 	<li class="breadcrumb-item"><a href="{{route('hrooms.show',$room->id)}}"> {{$room->name}}'s Dashboard </a></li>
+	<li class="breadcrumb-item"><a href="{{url()->current()}}"> Invited </a></li>
 
 @endsection
 
@@ -68,122 +69,62 @@
 @endsection
 
 @section('content')
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="tile-body">
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered" id="sampleTable">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Name</th>
+								<th>Role</th>
+								<th>Action</th>
+								{{-- <th>Office</th>
+								<th>Age</th>
+								<th>Start date</th>
+								<th>Salary</th> --}}
+							</tr>
+						</thead>
+						<tbody>
+							@php $i=1 @endphp
+							@foreach($c as $members)
+							@foreach($members as $member)
+							<tr>
+								<td> {{$i}} </td>
+								<td> {{$member->name}} </td>
+								
+								<td> {{$member->roles[0]->name}} </td>
+								{{-- OR --}}
+								{{-- <td> Student </td> --}}
+								{{-- <td>Edinburgh</td>
+								<td>61</td>
+								<td>2011/04/25</td>
+								<td>$320,800</td> --}}
+								<td>
 
-	<div class="row">
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('teachersview', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4>Teachers</h4>
-						<p style="color: red;"><b> {{$tcount}} </b></p>
-					</div>
+									<a href="" class="btn btn-info ml-3">View</a>
+									{{-- <form action="{{route('confirmreq', $room->id)}}" method="post" class="d-inline-block">
+										@csrf
+										@method('POST')
+										<input type="hidden" name="room_id" value="{{$room->id}}">
+										<input type="hidden" name="user_id" value="{{$member->id}}">
+										<button type="submit" class="btn btn-success ml-3">Confirm</button>
+									</form> --}}
+									
+									<a href="{{route('removereq', [$room->id,$member->id])}}" class="btn btn-danger ml-1"> Cancel </a>
+								</td>
+							</tr>
+							@php $i++ @endphp
+							@endforeach
+							@endforeach
+							
+						</tbody>
+					</table>
 				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('studentsview', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4>Students</h4>
-						<p style="color: red;"><b> {{$scount}} </b></p>
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small info coloured-icon"><i class="icon fa fa-thumbs-o-up fa-3x"></i>
-					<div class="info">
-						<h4>Attendances</h4>
-						{{-- <p style="color: red;"><b>25</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small danger coloured-icon"><i class="icon fa fa-star fa-3x"></i>
-					<div class="info">
-						<h4>exam results</h4>
-						{{-- <p style="color: red;"><b>500</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-files-o fa-3x"></i>
-					<div class="info">
-						<h4>Daily Lessons</h4>
-						{{-- <p style="color: red;"><b>10</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-files-o fa-3x"></i>
-					<div class="info">
-						<h4>Assignments</h4>
-						{{-- <p style="color: red;"><b>10</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-files-o fa-3x"></i>
-					<div class="info">
-						<h4>old questions</h4>
-						{{-- <p style="color: red;"><b>500</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-		<div class="col-md-6 col-lg-3">
-			<a href="" class="textdecoration-none">
-				<div class="widget-small warning coloured-icon"><i class="icon fa fa-question fa-3x"></i>
-					<div class="info">
-						<h4>quizzes</h4>
-						{{-- <p style="color: red;"><b>500</b></p> --}}
-					</div>
-				</div>
-			</a>
-		</div>
-
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('invitemember', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4> Invite Member </h4>
-						<p style="color: red;"><b>  </b></p>
-					</div>
-				</div>
-			</a>
-		</div>
-
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('memberrequest', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4> Members Request </h4>
-						<p style="color: red;"><b> {{$rcount}} </b></p>
-					</div>
-				</div>
-			</a>
-		</div>
-
-		<div class="col-md-6 col-lg-3">
-			<a href="{{route('invitedmember', $room->id)}}" class="textdecoration-none">
-				<div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-					<div class="info">
-						<h4> Invited Members </h4>
-						<p style="color: red;"><b> {{$icount}} </b></p>
-					</div>
-				</div>
-			</a>
+			</div>
 		</div>
 	</div>
-
+</div>
 @endsection

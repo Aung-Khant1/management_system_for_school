@@ -103,7 +103,40 @@ class TroomController extends Controller
      */
     public function show($id)
     {
-        //
+        $room = Room::find($id);
+        
+        $user = Auth::user();
+        $role = auth()->user()->getRoleNames();
+        $teachers = DB::table('user_in__rooms')
+                    ->where('room_id', $id)
+                    ->where('role_id', 3)
+                    ->where('status', 1)
+                    ->get();
+        $tcount = count($teachers);
+
+        $students = DB::table('user_in__rooms')
+                    ->where('room_id', $id)
+                    ->where('role_id', 4)
+                    ->where('status', 1)
+                    ->get();
+        $scount = count($students);
+
+
+        $imembers = DB::table('user_in__rooms')
+                    ->where('room_id', $id)
+                    ->where('status', 0)
+                    ->get();
+        $icount = count($imembers);
+
+        $rmembers = DB::table('user_in__rooms')
+                    ->where('room_id', $id)
+                    ->where('status', 2)
+                    ->get();
+        $rcount = count($rmembers);
+        
+        // dd($tcount);
+
+        return view('teacher.roomdashboard', compact('room','user', 'role', 'tcount', 'scount', 'icount', 'rcount'));
     }
 
     /**
@@ -242,6 +275,117 @@ class TroomController extends Controller
         }
 
         
+    }
+
+
+    public function tteachersview($id)
+    {
+        $room = Room::find($id);
+        $teachers = DB::table('user_in__rooms')
+                    ->where('room_id', $id)
+                    ->where('role_id', 3)
+                    ->where('status', 1)
+                    ->get();
+        $user = Auth::user();
+        $role = auth()->user()->getRoleNames();
+        $v = [];
+        foreach ($teachers as $key => $value) {
+            
+                array_push($v, $value->user_id);
+            
+        }
+        $c = [];
+        foreach ($v as $key => $value) {
+            $a = User::where('id',$value)
+                // Optional
+                ->whereHas('roles', function ($query) {
+                    $query->where('name','=','teacher');
+                })
+                ->with('roles')->get();
+            
+                array_push($c, $a);
+            
+        }
+        // dd($c);
+        return view('teacher.teachersview', compact('user', 'role', 'room', 'c'));
+    }
+
+    public function tstudentsview($id)
+    {
+        $room = Room::find($id);
+        $students = DB::table('user_in__rooms')
+                    ->where('room_id', $id)
+                    ->where('role_id', 4)
+                    ->where('status', 1)
+                    ->get();
+        $user = Auth::user();
+        $role = auth()->user()->getRoleNames();
+        $v = [];
+        foreach ($students as $value) {
+            
+                array_push($v, $value->user_id);
+            
+        }
+        $c = [];
+        foreach ($v as $key => $value) {
+            $a = User::where('id',$value)
+                // Oprional
+                ->whereHas('roles', function ($query) {
+                    $query->where('name','=','student');
+                })
+                ->with('roles')->get();
+            
+                array_push($c, $a);
+            
+        }
+
+        // dd($c);
+        return view('teacher.studentsview', compact('user', 'role', 'room', 'c'));
+    }
+
+    public function tinvitemember($id)
+    {
+        $room = Room::find($id);
+        $user = Auth::user();
+        $role = auth()->user()->getRoleNames();
+        $users = [$user->id];
+        $allusers = User::whereHas('roles', function ($query) {
+                            $query->where('name','=','host');
+                        })
+                        ->get();
+        foreach ($allusers as $key => $value) {
+            array_push($users, $value->id);
+        }
+        // dd($users);
+        $members = User::whereNotIn('id',$users)->get();
+        $userinaroom = DB::table('user_in__rooms')
+                    ->where([['room_id',$id],['status',1]])
+                    ->get();
+        $already = [];
+        foreach ($userinaroom as $key => $value) {
+            array_push($already,$value->user_id);
+        };
+
+        $invitedpendinguser = DB::table('user_in__rooms')
+                    ->where([['room_id',$id],['status',0]])
+                    ->get();
+        $invitedpending = [];
+        foreach ($invitedpendinguser as $key => $value) {
+            array_push($invitedpending,$value->user_id);
+        };
+
+        $requestpendinguser = DB::table('user_in__rooms')
+                    ->where([['room_id',$id],['status',2]])
+                    ->get();
+        $requestpending = [];
+        foreach ($requestpendinguser as $key => $value) {
+            array_push($requestpending,$value->user_id);
+        };
+        // $members = $members->diff(User::whereIn('id',$a)->with('roles')->get());
+
+        // dd($already);
+
+        return view('teacher.invitemember', compact('user', 'role', 'room', 'members', 'already', 'invitedpending', 'requestpending'));
     }
 
 }

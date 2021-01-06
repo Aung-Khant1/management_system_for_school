@@ -1,11 +1,14 @@
 @extends('template')
-
-@section('sub_title', 'Rooms')
+@section('sub_title', "Invite Member")
 
 @section('navs')
 
-	<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
-	<li class="breadcrumb-item"><a href="{{route('trooms.index')}}">Rooms</a></li>
+<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
+<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{route('trooms.index')}}">Rooms</a></li>
+<li class="breadcrumb-item"><a href="{{route('trooms.show',$room->id)}}"> {{$room->name}}'s Dashboard </a></li>
+	<li class="breadcrumb-item"><a href="{{url()->current()}}"> Invite </a></li>
+
 
 @endsection
 
@@ -18,7 +21,7 @@
 @endsection
 
 @section('role')
-	{{$role[0]}}
+	<span style="text-transform: uppercase;"> {{$role[0]}} </span>
 @endsection
 
 @section('sidemenu')
@@ -69,32 +72,136 @@
 @endsection
 
 @section('content')
-
-	<div class="row">
-        @foreach ($rooms as $row)
-        @foreach($row as $room)
-		<div class="mb-4 col-md-6 col-lg-3 col-sm-6" style="height: 487px;">
-			<div class="card">
-		  		<div class="card-body">
-		   			<h5 class="card-title"> {{$room->name}} </h5>
-		    		<p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-		    		<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-		    		<div>
-		    			<a href="{{route('trooms.show', $room->id)}}" class="btn btn-primary btn-block">View</a>
-		    			
-		    			{{-- <button class="btn btn-primary invite_btn ml-2" data-rid={{$room->id}}>Invite</button> --}}
-		    		</div>
-		  		</div>
-		  		<img src="{{$room->photo}}" class="card-img-bottom" alt="...">
-
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="tile-body">
+				<div class="table-responsive">
+					<table class="table table-hover" id="sampleTable">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Name</th>
+								<th>Role</th>
+								<th>Action</th>
+								{{-- <th>Office</th>
+								<th>Age</th>
+								<th>Start date</th>
+								<th>Salary</th> --}}
+							</tr>
+						</thead>
+						<tbody>
+							@php
+								$i = 1;
+							@endphp
+							@foreach ($members as $key => $member)
+							
+								<tr>
+									<td> {{$i}} </td>
+									<td> {{$member->name}} </td>
+									<td style="text-transform: uppercase;"> {{$member->roles[0]->name}} </td>
+									<td>
+										@if (in_array($member->id,$already))
+											<button class="btn"> Added </button>
+										@elseif (in_array($member->id, $invitedpending))
+											<div class="cancel">
+												<button class="btn"> Invited </button>
+											</div>
+										@elseif (in_array($member->id, $requestpending))
+											<div class="cancel">
+												<button class="btn"> Requesting </button>
+											</div>
+										@else
+											<div class="added">
+												<button class="btn btn-primary add" data-uid={{$member->id}} > Add </button>
+											</div>
+										@endif
+										
+									</td>
+									
+								</tr>
+							@php
+								$i++;
+							@endphp
+							
+							@endforeach
+							
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
-		@endforeach
-        @endforeach		
 	</div>
+</div>
+@endsection
 
-	<div>
-		<a href="{{route('trooms.create')}}" class="btn btn-primary">Join Room</a>
-	</div>
 
+@section('script')
+		<script>
+			$.ajaxSetup({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				}
+			});
+
+			$(document).ready(function () {
+				$('.add').click(function () { 
+					// alert('ok');
+					var thisbtn = $(this);
+					var uid = $(this).data('uid');
+					var rid = {{$room->id}};
+					
+					// alert(uid);
+					$.post("{{route('inviteuser')}}", {
+						uid: uid,
+						rid: rid
+					},function (response) {
+						// console.log(response);
+						if (response.length > 0) {
+							const Toast = Swal.mixin({
+							toast: true,
+							position: 'top-end',
+							showConfirmButton: false,
+							timer: 3000,
+							timerProgressBar: false,
+							didOpen: (toast) => {
+								toast.addEventListener('mouseenter', Swal.stopTimer)
+								toast.addEventListener('mouseleave', Swal.resumeTimer)
+							}
+						})
+
+						Toast.fire({
+							icon: 'error',
+							title: 'User Already Exit Or Something went Wrong!'
+						})
+						}else{
+							var html = `<button class="btn"> Invited </button>`;
+							$(thisbtn).replaceWith(html);
+							const Toast = Swal.mixin({
+							toast: true,
+							position: 'top-end',
+							showConfirmButton: false,
+							timer: 3000,
+							timerProgressBar: false,
+							didOpen: (toast) => {
+								toast.addEventListener('mouseenter', Swal.stopTimer)
+								toast.addEventListener('mouseleave', Swal.resumeTimer)
+							}
+						})
+
+						Toast.fire({
+							icon: 'success',
+							title: 'Request Successful!'
+						})
+						
+						}
+						
+						},
+					);
+					
+				});
+			});
+
+
+		</script>
 @endsection

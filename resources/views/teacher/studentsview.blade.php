@@ -1,11 +1,15 @@
 @extends('template')
 
-@section('sub_title', 'Rooms')
-
+@section('sub_title')
+	Teachers
+@endsection
 @section('navs')
 
-	<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
-	<li class="breadcrumb-item"><a href="{{route('trooms.index')}}">Rooms</a></li>
+<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}"><i class="fa fa-home fa-lg"></i></a></li>
+<li class="breadcrumb-item"><a href="{{route('Teacher.index')}}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{route('trooms.index')}}">Rooms</a></li>
+<li class="breadcrumb-item"><a href="{{route('trooms.show',$room->id)}}"> {{$room->name}}'s Dashboard </a></li>
+	<li class="breadcrumb-item"><a href="{{url()->current()}}">Teachers</a></li>
 
 @endsection
 
@@ -22,7 +26,7 @@
 @endsection
 
 @section('sidemenu')
-<li><a class="app-menu__item {{Request::is('Teacher*') ? 'active' : ''}}" href="{{route('Teacher.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
+<<li><a class="app-menu__item {{Request::is('Teacher*') ? 'active' : ''}}" href="{{route('Teacher.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
 
 <li><a class="app-menu__item {{Request::is('trooms*') ? 'active' : ''}}" href="{{route('trooms.index')}}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Rooms</span></a></li>
 
@@ -69,32 +73,108 @@
 @endsection
 
 @section('content')
-
-	<div class="row">
-        @foreach ($rooms as $row)
-        @foreach($row as $room)
-		<div class="mb-4 col-md-6 col-lg-3 col-sm-6" style="height: 487px;">
-			<div class="card">
-		  		<div class="card-body">
-		   			<h5 class="card-title"> {{$room->name}} </h5>
-		    		<p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-		    		<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-		    		<div>
-		    			<a href="{{route('trooms.show', $room->id)}}" class="btn btn-primary btn-block">View</a>
-		    			
-		    			{{-- <button class="btn btn-primary invite_btn ml-2" data-rid={{$room->id}}>Invite</button> --}}
-		    		</div>
-		  		</div>
-		  		<img src="{{$room->photo}}" class="card-img-bottom" alt="...">
-
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="tile-body">
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered" id="sampleTable">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Name</th>
+								<th>Role</th>
+								<th>Action</th>
+								{{-- <th>Office</th>
+								<th>Age</th>
+								<th>Start date</th>
+								<th>Salary</th> --}}
+							</tr>
+						</thead>
+						<tbody>
+							@php $i=1 @endphp
+							@foreach($c as $teachers)
+							@foreach($teachers as $teacher)
+							<tr>
+								<td> {{$i}} </td>
+								<td> {{$teacher->name}} </td>
+								
+								{{-- <td> {{$teacher->roles[0]->name}} </td> --}}
+								{{-- OR --}}
+								<td> Teacher </td>
+								{{-- <td>Edinburgh</td>
+								<td>61</td>
+								<td>2011/04/25</td>
+								<td>$320,800</td> --}}
+								<td>
+									<a href="" class="btn btn-info">View</a>
+									<a href="" class="btn btn-success mx-3">Activities</a>
+									
+									
+								</td>
+							</tr>
+							@php $i++ @endphp
+							@endforeach
+							@endforeach
+							{{-- {{$c[0]}} --}}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
-		@endforeach
-        @endforeach		
 	</div>
+</div>
+@endsection
 
-	<div>
-		<a href="{{route('trooms.create')}}" class="btn btn-primary">Join Room</a>
-	</div>
+@section('script')
+
+<script type="text/javascript">
+	
+	$.ajaxSetup({
+    	headers: {
+        	'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+   		}
+	});
+
+	jQuery(document).ready(function() {
+		$('.removetacher').click(function(event) {
+			
+			// Swal.fire({
+			// 	title: 'Are you sure?',
+			// 	text: "You won't be able to revert this!",
+			// 	icon: 'warning',
+			// 	showCancelButton: true,
+			// 	confirmButtonColor: '#3085d6',
+			// 	cancelButtonColor: '#d33',
+			// 	confirmButtonText: 'Yes, delete it!'
+			// }).then((result) => {
+			// 	// console.log(result);
+			// 	var con = result.isConfirmed;
+			// 	if(result.isConfirmed) {
+			// 		// Swal.fire(
+			// 		// 	'Deleted!',
+			// 		// 	'Your file has been deleted.',
+			// 		// 	'success'
+			// 		// )
+			// 		// console.log(con);
+					
+			// 		// return true;
+			// 	}
+			// })
+			var conn = confirm("Are you sure?");
+			if (conn == true) {
+				return true;
+			}
+
+			event.preventDefault();		
+			
+			
+		});
+	});
+
+
+
+</script>
+
 
 @endsection

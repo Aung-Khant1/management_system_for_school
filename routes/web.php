@@ -49,11 +49,14 @@ Route::post('hrooms/inviteuser', 'RoomController@inviteuser')->name('inviteuser'
 
 Route::resource('Teacher', 'TeacherController');
 Route::resource('trooms', 'TroomController');
+Route::get('trooms/teachers/{id}', 'TroomController@tteachersview')->name('tteachersview');
+Route::get('trooms/students/{id}', 'TroomController@tstudentsview')->name('tstudentsview');
 Route::post('trooms/joinroom', 'TroomController@joinroom')->name('joinroom');
 Route::get('roomreq', 'TroomController@roomreq')->name('roomreq');
 Route::get('reqrooms', 'TroomController@reqrooms')->name('reqrooms');
 Route::get('roomreqcancel/{rid}', 'TroomController@roomreqcancel')->name('roomreqcancel');
 Route::get('roomreqconfirm/{rid}', 'TroomController@roomreqconfirm')->name('roomreqconfirm');
+Route::get('trooms/invitemember/{id}', 'TroomController@tinvitemember')->name('tinvitemember');
 
 
 
